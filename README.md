@@ -1,4 +1,21 @@
 
+Relation-User-Post API (NestJS + MongoDB)
+ეს არის RESTful API, რომელიც ქმნის User და Post მოდელებს შორის ურთიერთობას. ყოველი პოსტი ეკუთვნის ერთ იუზერს.
+
+ტექნოლოგიები
+
+
+NestJS
+
+  MongoDB + Mongoose
+
+  class-validator
+
+  class-transformer
+
+  Validation Guards
+
+
 Directory structure:
 └── bachidze-relation-user-post--nestjs/
     ├── README.md
@@ -40,61 +57,42 @@ Directory structure:
 
 
 
+ User
 
-This is a simple NestJS-based RESTful API demonstrating a one-to-many relationship between Users and Posts using MongoDB, `class-validator`, and `class-transformer`.
+  POST /users – იუზერის შექმნა (უნიკალური Email)
 
+  GET /users – ყველა იუზერის წამოღება
 
+  GET /users/:id – კონკრეტული იუზერის ნახვა
 
+  PATCH /users/:id – იუზერის განახლება
 
-Each user can have multiple posts. Posts reference the user by MongoDB ObjectId.
-
-## 🚀 Technologies Used
-
-- **NestJS** – Progressive Node.js framework
-- **MongoDB** – NoSQL database
-- **Mongoose** – ODM for MongoDB
-- **class-validator** – DTO validation
-- **class-transformer** – Request/response transformation
-
-## 🧠 Core Features
-
-- Create users with validation
-- Create posts linked to users
-- Header-based user ID validation before creating a post
-- Reusable DTOs with validation logic
-- MongoDB object ID checks
-
-## 📌 API Endpoints
-
-### Users
-
-- `POST /users` – Create a user  
-- `GET /users` – Get all users  
-- `GET /users/:id` – Get user by ID  
-
-### Posts
-
-- `POST /posts` – Create post  
-  - Requires `userId` in the request header
-  - Validates user ID before saving
-- `GET /posts` – Get all posts  
-
-## 🔐 Post Creation Flow
-
-To create a post, you must provide a valid MongoDB User ID in the `userId` header.  
-If the header is missing or the user does not exist, the request will be rejected.
-
-### Example Request
-
-```http
-POST /posts
-Headers:
-  userId: 664d12fc7a1f9c34a73184bc
-Body:
-{
-  "title": "My First Post",
-  "content": "This is the body of the post."
-}
+  DELETE /users/:id – იუზერის წაშლა
 
 
+Posts
 
+  POST /posts – პოსტის შექმნა (მხოლოდ სწორი userId header-ით)
+
+  GET /posts – ყველა პოსტის ნახვა (მათ შორის იუზერის დეტალები populate)
+
+  GET /posts/:id – პოსტის ნახვა ID-ით (დამუშავება საჭირო)
+
+  PATCH /posts/:id – განახლება (დამუშავება საჭირო)
+
+  DELETE /posts/:id – წაშლა (დამუშავება საჭირო)
+
+
+ Validation Guard
+
+    isValidUserId – ამოწმებს userId Header-ს სწორ ფორმატზე და გადასცემს request.userId-ს Controller-ში.
+
+
+    როგორ გავუშვათ ?
+
+    cd relation
+    npm install
+    npm run start:dev
+
+
+    MONGO_URI=your_mongodb_connection_string(აქ თქვენი მონგოს ლინკი ჩაწერეთ)
