@@ -1,98 +1,100 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Directory structure:
+└── bachidze-relation-user-post--nestjs/
+    ├── README.md
+    ├── eslint.config.mjs
+    ├── nest-cli.json
+    ├── package.json
+    ├── tsconfig.build.json
+    ├── tsconfig.json
+    ├── .prettierrc
+    ├── src/
+    │   ├── app.controller.spec.ts
+    │   ├── app.controller.ts
+    │   ├── app.module.ts
+    │   ├── app.service.ts
+    │   ├── main.ts
+    │   ├── posts/
+    │   │   ├── isValidUSerid.guard.ts
+    │   │   ├── posts.controller.ts
+    │   │   ├── posts.module.ts
+    │   │   ├── posts.service.ts
+    │   │   ├── dto/
+    │   │   │   ├── create-post.dto.ts
+    │   │   │   └── update-post.dto.ts
+    │   │   └── schema/
+    │   │       └── post.schema.ts
+    │   └── users/
+    │       ├── user.interface.ts
+    │       ├── users.controller.ts
+    │       ├── users.module.ts
+    │       ├── users.service.ts
+    │       ├── dto/
+    │       │   ├── create-user.dto.ts
+    │       │   └── update-user.dto.ts
+    │       └── schema/
+    │           └── user.schema.ts
+    └── test/
+        ├── app.e2e-spec.ts
+        └── jest-e2e.json
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Project setup
+This is a simple NestJS-based RESTful API demonstrating a one-to-many relationship between Users and Posts using MongoDB, `class-validator`, and `class-transformer`.
 
-```bash
-$ npm install
-```
 
-## Compile and run the project
 
-```bash
-# development
-$ npm run start
 
-# watch mode
-$ npm run start:dev
+Each user can have multiple posts. Posts reference the user by MongoDB ObjectId.
 
-# production mode
-$ npm run start:prod
-```
+## 🚀 Technologies Used
 
-## Run tests
+- **NestJS** – Progressive Node.js framework
+- **MongoDB** – NoSQL database
+- **Mongoose** – ODM for MongoDB
+- **class-validator** – DTO validation
+- **class-transformer** – Request/response transformation
 
-```bash
-# unit tests
-$ npm run test
+## 🧠 Core Features
 
-# e2e tests
-$ npm run test:e2e
+- Create users with validation
+- Create posts linked to users
+- Header-based user ID validation before creating a post
+- Reusable DTOs with validation logic
+- MongoDB object ID checks
 
-# test coverage
-$ npm run test:cov
-```
+## 📌 API Endpoints
 
-## Deployment
+### Users
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+- `POST /users` – Create a user  
+- `GET /users` – Get all users  
+- `GET /users/:id` – Get user by ID  
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Posts
 
-```bash
-$ npm install -g mau
-$ mau deploy
-```
+- `POST /posts` – Create post  
+  - Requires `userId` in the request header
+  - Validates user ID before saving
+- `GET /posts` – Get all posts  
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## 🔐 Post Creation Flow
 
-## Resources
+To create a post, you must provide a valid MongoDB User ID in the `userId` header.  
+If the header is missing or the user does not exist, the request will be rejected.
 
-Check out a few resources that may come in handy when working with NestJS:
+### Example Request
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```http
+POST /posts
+Headers:
+  userId: 664d12fc7a1f9c34a73184bc
+Body:
+{
+  "title": "My First Post",
+  "content": "This is the body of the post."
+}
 
-## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
