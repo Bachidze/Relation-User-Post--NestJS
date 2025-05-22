@@ -1,9 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Post } from './schema/post.schema';
-import { Model } from 'mongoose';
+import { isValidObjectId, Model } from 'mongoose';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -26,15 +26,27 @@ if("_id" in user){
     return this.PostSchema.find().populate("user")
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
+ async findOne(id: string) {
+    if (!isValidObjectId(id)) throw new BadRequestException('Invalid post ID');
+    const post = await this.PostSchema.findById(id).populate('user');
+    if (!post) throw new NotFoundException('Post not found');
+    return post;
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  async update(id: string, updatePostDto: UpdatePostDto) {
+    if (!isValidObjectId(id)) throw new BadRequestException('Invalid post ID');
+    const updated = await this.PostSchema.findByIdAndUpdate(id, updatePostDto, {
+      new: true,
+    }).populate('user');
+
+    if (!updated) throw new NotFoundException('Post not found');
+    return updated;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  async remove(id: string) {
+    if (!isValidObjectId(id)) throw new BadRequestException('Invalid post ID');
+    const deleted = await this.PostSchema.findByIdAndDelete(id);
+    if (!deleted) throw new NotFoundException('Post not found');
+    return { message: 'Post successfully deleted' };
   }
 }
